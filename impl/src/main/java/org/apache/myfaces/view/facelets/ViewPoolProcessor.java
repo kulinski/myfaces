@@ -161,8 +161,8 @@ public class ViewPoolProcessor
      */
     public static void initialize(FacesContext context)
     {
-        if (context.isProjectStage(ProjectStage.Production))
-        {
+        //        if (context.isProjectStage(ProjectStage.Production))
+        // {
             boolean initialize = true;
             String elMode = WebConfigParamUtils.getStringInitParameter(
                         context.getExternalContext(),
@@ -202,13 +202,13 @@ public class ViewPoolProcessor
                 initialize = false;
             }
             
-            if (initialize)
+            if (true)
             {
                 ViewPoolProcessor processor = new ViewPoolProcessor(context);
                 context.getExternalContext().
                     getApplicationMap().put(INSTANCE, processor);
             }
-        }
+            //  }
     }
 
     public ViewPool getViewPool(FacesContext context, UIViewRoot root)
@@ -394,6 +394,7 @@ public class ViewPoolProcessor
             FaceletState faceletState = (FaceletState) root.getAttributes().get(
                     ComponentSupport.FACELET_STATE_INSTANCE);
             boolean isDynamic = faceletState != null ? faceletState.isDynamic() : false;
+            System.out.println("POOLING root:"+root.getViewId()+" dynamic:"+isDynamic);
             if (!isDynamic)
             {
                 viewPool.storeStaticViewStructureMetadata(context, root, faceletState);            
