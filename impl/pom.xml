@@ -571,7 +571,7 @@
                 </executions>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <createSourcesJar>true</createSourcesJar>
+                   <!-- <createSourcesJar>true</createSourcesJar>-->
                     <artifactSet>
                         <includes>
                             <include>org.apache.myfaces.core.internal:myfaces-impl-shared</include>
