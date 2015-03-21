@@ -447,7 +447,7 @@ public class ViewPoolProcessor
     {
         ViewPool viewPool = getViewPool(context, view);
         
-        if (viewPool.isWorthToRecycleThisView(context, view))
+        if (viewPool != null && viewPool.isWorthToRecycleThisView(context, view))
         {
             ViewStructureMetadata viewStructureMetadata = null;
             if (faceletViewState == null)
