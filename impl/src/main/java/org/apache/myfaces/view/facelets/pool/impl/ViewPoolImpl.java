@@ -98,6 +98,7 @@ public class ViewPoolImpl extends ViewPool
         if (q == null)
         {
             q = new ViewPoolEntryHolder(maxCount);
+            System.out.println("POOLING: pushStaticStructureView key:"+key+" entry:"+entry);
             staticStructureViewPool.put(key, q);
         }
         q.add(entry);
@@ -106,6 +107,7 @@ public class ViewPoolImpl extends ViewPool
     protected ViewEntry popStaticStructureView(FacesContext context, MetadataViewKey key)
     {
         ViewPoolEntryHolder q = staticStructureViewPool.get(key);
+        System.out.println("POOLING: popStaticStructureView key:"+key+" q:"+q);
         if (q == null)
         {
             return null;
@@ -133,6 +135,7 @@ public class ViewPoolImpl extends ViewPool
         if (q == null)
         {
             q = new ViewPoolEntryHolder(maxCount);
+            System.out.println("POOLING: pushPartialStructureView key:"+key+" entry:"+entry);
             partialStructureViewPool.put(key, q);
         }
         q.add(entry);
@@ -141,6 +144,7 @@ public class ViewPoolImpl extends ViewPool
     protected ViewEntry popPartialStructureView(FacesContext context, MetadataViewKey key)
     {
         ViewPoolEntryHolder q = partialStructureViewPool.get(key);
+        System.out.println("POOLING: popPartialStructureView key:"+key+" q:"+q);
         if (q == null)
         {
             return null;
@@ -207,12 +211,14 @@ public class ViewPoolImpl extends ViewPool
         if (map == null)
         {
             map = new ConcurrentHashMap<DynamicViewKey, ViewPoolEntryHolder>();
+            System.out.println("POOLING: pushDynamicStructureView key:"+key+" entry:"+entry+" root"+root.getViewId());
             dynamicStructureViewPool.put(ordinaryKey, map);
         }
         ViewPoolEntryHolder q = map.get(key);
         if (q == null)
         {
             q = new ViewPoolEntryHolder(maxCount);
+            System.out.println("POOLING: pushDynamicStructureView key:"+key+" entry:"+entry+" q:"+q);
             map.put(key, q);
         }
         if (!q.add(entry))
@@ -225,6 +231,7 @@ public class ViewPoolImpl extends ViewPool
     {
         MetadataViewKey ordinaryKey = deriveViewKey(context, root);
         Map<DynamicViewKey, ViewPoolEntryHolder> map = dynamicStructureViewPool.get(ordinaryKey);
+        System.out.println("POOLING: popDynamicStructureView key:"+key+" root:"+root.getViewId());
         if (map == null)
         {
             return null;
@@ -365,8 +372,10 @@ public class ViewPoolImpl extends ViewPool
         ViewPoolEntryHolder q = partialStructureViewPool.get(key);
         if (q != null && q.isFull())
         {
+            System.out.println("POOLING: isWorthRecycle FALSE! root:"+root.getViewId()+" q:"+q);
             return false;
         }
+        System.out.println("POOLING: isWorthRecycle TRUE! root:"+root.getViewId()+" q:"+q);
         return true;
     }
 
@@ -382,6 +391,7 @@ public class ViewPoolImpl extends ViewPool
             ViewStructureMetadata metadata = new ViewStructureMetadataImpl(state, 
                     rvc.getRequestViewMetadata().cloneInstance());
             staticStructureViewMetadataMap.put(key, metadata);
+            System.out.println("POOLING: storeStatic root:"+root.getViewId()+" key"+key);
         }
     }
 
@@ -395,6 +405,7 @@ public class ViewPoolImpl extends ViewPool
     private Object saveViewRootState(FacesContext context, UIViewRoot root)
     {
         Object state;
+        System.out.println("POOLING: saveViewRootState root:"+root.getViewId());
         if (root.getViewMap(false) != null)
         {
             try
@@ -422,8 +433,9 @@ public class ViewPoolImpl extends ViewPool
         MetadataViewKey ordinaryKey = deriveViewKey(context, root);
         if (!dynamicStructureViewMetadataMap.containsKey(ordinaryKey))
         {
-            
+            System.out.println("POOLING: storeDynamicStructureMetadata root:"+root.getViewId()+" key:"+key+"metadataViewKey"+ordinaryKey.getViewId());
             Map<DynamicViewKey, ViewStructureMetadata> map = dynamicStructureViewMetadataMap.get(ordinaryKey);
+            System.out.println("POOLING: storeDynamicStructureMetadata root:"+root.getViewId()+" map:"+map);
             if (map == null)
             {
                 map = new ConcurrentHashMap<DynamicViewKey, ViewStructureMetadata>();
@@ -446,6 +458,9 @@ public class ViewPoolImpl extends ViewPool
         DynamicViewKey key = (DynamicViewKey) generateDynamicStructureViewKey(context, root, faceletDynamicState);
         MetadataViewKey ordinaryKey = deriveViewKey(context, root);
         Map<DynamicViewKey, ViewStructureMetadata> map = dynamicStructureViewMetadataMap.get(ordinaryKey);
+        //System.out.println("POOLING: retrieveDynamicStructureMetadata root:"+root.getViewId()+" key:"+key+"metadataViewKey"+ordinaryKey.getViewId());
+        System.out.println("POOLING: retrieveDynamicStructureMetadata root:"+root.getViewId()+" keymap:"+map);
+        System.out.println("POOLING: retrieveDynamicStructureMetadata poolMapsize"+dynamicStructureViewMetadataMap.size()+" map:"+dynamicStructureViewMetadataMap);
         if (map != null)
         {
             return map.get(key);
